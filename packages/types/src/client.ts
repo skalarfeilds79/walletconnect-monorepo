@@ -1,15 +1,15 @@
 import { Logger } from "pino";
 import { IKeyValueStorage, KeyValueStorageOptions } from "keyvaluestorage";
-import { JsonRpcResponse, IEvents } from "@walletconnect/jsonrpc-types";
+import { IEvents } from "@walletconnect/events";
+import { IHeartBeat } from "@walletconnect/heartbeat";
+import { JsonRpcResponse } from "@walletconnect/jsonrpc-types";
 
 import { IRelayer, RelayerTypes } from "./relayer";
 import { ISession, SessionTypes } from "./session";
 import { IPairing, PairingTypes } from "./pairing";
 import { SignalTypes, AppMetadata, Reason } from "./misc";
 import { ICrypto, IKeyChain } from "./crypto";
-import { IHeartBeat } from "./heartbeat";
 import { IStorage } from "./storage";
-import { IEncoder } from "./encoder";
 
 export interface ClientOptions {
   name?: string;
@@ -33,7 +33,6 @@ export abstract class IClient extends IEvents {
 
   public abstract crypto: ICrypto;
 
-  public abstract encoder: IEncoder;
   public abstract storage: IStorage;
   public abstract relayer: IRelayer;
 
@@ -62,10 +61,13 @@ export abstract class IClient extends IEvents {
   public abstract approve(params: ClientTypes.ApproveParams): Promise<SessionTypes.Settled>;
   // for responder to reject a session proposal
   public abstract reject(params: ClientTypes.RejectParams): Promise<void>;
-  // for responder to upgrade session permissions
-  public abstract upgrade(params: ClientTypes.UpgradeParams): Promise<void>;
-  // for responder to update session state
+
+  // for controller to update session state
   public abstract update(params: ClientTypes.UpdateParams): Promise<void>;
+  // for controller to upgrade session permissions
+  public abstract upgrade(params: ClientTypes.UpgradeParams): Promise<void>;
+  // for controller to extend session expiry
+  public abstract extend(params: ClientTypes.ExtendParams): Promise<void>;
 
   // for proposer to request JSON-RPC
   public abstract request(params: ClientTypes.RequestParams): Promise<any>;
@@ -106,9 +108,11 @@ export declare namespace ClientTypes {
     reason?: Reason;
   }
 
+  export type UpdateParams = SessionTypes.UpdateParams;
+
   export type UpgradeParams = SessionTypes.UpgradeParams;
 
-  export type UpdateParams = SessionTypes.UpdateParams;
+  export type ExtendParams = SessionTypes.ExtendParams;
 
   export type RequestParams = SessionTypes.RequestParams;
 
