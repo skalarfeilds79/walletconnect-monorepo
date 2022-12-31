@@ -42,7 +42,7 @@
     "@walletconnect/relay-api": "^1.0.2",
     "@walletconnect/safe-json": "^1.0.0",
     "axios": "^0.21.1",
-    "fastify": "^3.10.1",
+    "fastify": "^3.29.4",
     "fastify-helmet": "^5.1.0",
     "fastify-websocket": "^3.0.0",
     "pino": "^6.11.0",
